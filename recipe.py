@@ -5,8 +5,8 @@ import string
 import ast
 import re
 import unidecode
-nltk.download('wordnet')
-nltk.download('stopwords')
+#nltk.download('wordnet')
+#nltk.download('stopwords')
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
 from sklearn.feature_extraction.text import TfidfVectorizer
