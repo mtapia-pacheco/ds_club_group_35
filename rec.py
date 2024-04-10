@@ -11,7 +11,7 @@ def get_recommendations(N, scores):
     top = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)[:N]
 
     # create dataframe to load in recommendations
-    recommendations = pd.DataFrame(columns = ['Title', 'Ingredients'])
+    recommendations = pd.DataFrame(columns = ['Title', 'Ingredients', 'Images'])
 
     count = 0
     for i in top:

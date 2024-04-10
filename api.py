@@ -1,6 +1,4 @@
 from flask import Flask, jsonify, request
-from sklearn.metrics.pairwise import cosine_similarity
-from recipe import ingredient_parser
 from rec import rec_api
 
 app = Flask(__name__)
