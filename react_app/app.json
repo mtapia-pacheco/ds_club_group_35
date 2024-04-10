@@ -28,9 +28,9 @@
     },
     "plugins": [
       [
-        "react-native-vision-camera",
+        "expo-camera",
         {
-          "cameraPermissionText": "WorldlyBites needs access to your Camera."
+          "cameraPermission": "WorldlyBites needs access to your Camera."
         }
       ]
     ]

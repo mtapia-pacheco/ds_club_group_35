@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as Native from 'react-native';
 import * as Paper from 'react-native-paper';
+import { Camera, CameraType } from 'expo-camera';
 
-const allIngredients = ["Fish", "Flour", "Cabbage", "Squid", "Salmon", "Pie"];
+const allIngredients = ["Fish", "Flour", "Cabbage", "Squid", "Salmon", "Pie", "Fish", "Flour", "Cabbage", "Squid", "Salmon", "Pie", "Fish", "Flour", "Cabbage", "Squid", "Salmon", "Pie"];
 
 export default function Pantry() {
   [ingredientData, setIngredientData] = React.useState([]);
@@ -19,7 +20,30 @@ export default function Pantry() {
     </Native.View>
   );
 
-  
+  const cameraRef = React.useRef();
+  const [cameraPermission, requestCameraPermission] = Camera.useCameraPermissions();
+  const [isCameraReady, setIsCameraReady] = React.useState(false);
+  const [pictureTaken, setPictureTaken] = React.useState(false);
+
+  const [cameraModalVisible, setCameraModalVisible] = React.useState(false);
+  const showCameraModal = () => {
+    if (cameraPermission.granted) {
+      setPictureTaken(false);
+      setCameraModalVisible(true);
+    } else {
+      requestCameraPermission();
+    }
+  };
+  const hideCameraModal = () => setCameraModalVisible(false);
+
+  const [cameraURI, setCameraURI] = React.useState("");
+  const [cameraIngredients, setCameraIngredients] = React.useState([]);
+  const takePicture = async () => {
+    const data = await cameraRef.current.takePictureAsync({});
+    setCameraURI(data.uri);
+    setPictureTaken(true);
+    setCameraIngredients(getCameraIngredients());
+  }
 
   const [manualModalVisible, setManualModalVisible] = React.useState(false);
   const showManualModal = () => {setManualModalVisible(true); setManualText("")};
@@ -33,15 +57,19 @@ export default function Pantry() {
     hideManualModal();
   };
 
-  function suggestedIngredients() {
+  function ingredientAutofill() {
     return allIngredients.filter((x) => x.toLowerCase().startsWith(manualText.toLowerCase()));
+  }
+
+  function getCameraIngredients() {
+    return allIngredients;
   }
 
   return (
     <Native.View style={styles.container}>
       <Paper.Text style={styles.text}>Add Ingredients:</Paper.Text>
       <Native.View style={styles.buttonBar}>
-        <Paper.Button style={styles.button} mode='contained'> Camera </Paper.Button>
+        <Paper.Button style={styles.button} mode='contained' onPress={showCameraModal}> Camera </Paper.Button>
         <Paper.Button style={styles.button} mode='contained' onPress={showManualModal}> Manual </Paper.Button>
       </Native.View>
       <Native.FlatList
@@ -51,20 +79,34 @@ export default function Pantry() {
       />
 
       <Paper.Portal>
+        <Paper.Modal visible={cameraModalVisible} onDismiss={hideCameraModal} contentContainerStyle={styles.modal}>
+          { !pictureTaken ?
+            <Native.View>
+              <Camera ref={cameraRef} style={styles.cameraPreview} type='back' ratio='4:3' onCameraReady={()=>setIsCameraReady(true)}></Camera>
+              <Paper.Button visible={!pictureTaken} mode='contained' disabled={!isCameraReady} onPress={takePicture} >Take Picture</Paper.Button>
+            </Native.View> 
+            :
+            <Native.View>
+              <Native.Image style={styles.cameraPreview} source={{uri: cameraURI}} />
+              <Native.Text>The following ingredients were found:</Native.Text>
+              <Native.ScrollView contentContainerStyle={styles.chipList}>
+                {cameraIngredients.map( (item) => <Paper.Chip style={styles.chip} onPress={() => setManualText(item)}>{item}</Paper.Chip>)}
+              </Native.ScrollView>
+              <Paper.Button visible={!pictureTaken} mode='contained' disabled={!isCameraReady} onPress={takePicture} >Add Ingredients</Paper.Button>
+            </Native.View> 
+          }
+        </Paper.Modal>
+
         <Paper.Modal visible={manualModalVisible} onDismiss={hideManualModal} contentContainerStyle={styles.modal}>
           <Paper.TextInput
             label="Enter Ingredient Name..."
             value={manualText}
             onChangeText = {manualText => {setManualText(manualText)}}
           />
-          <Native.FlatList
-            data={suggestedIngredients()}
-            renderItem= { ({item}) => <Paper.Chip style={{marginTop: 5, marginRight: 5}} onPress={() => setManualText(item)}>{item}</Paper.Chip> }
-            style={{margin: 10, padding:5}}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          />
-          <Paper.Button mode='contained' disabled={!allIngredients.includes(manualText)} onPress={addManual}>Add</Paper.Button>
+          <Native.ScrollView contentContainerStyle={styles.chipList}>
+            {ingredientAutofill().map( (item) => <Paper.Chip style={styles.chip} onPress={() => setManualText(item)}>{item}</Paper.Chip>)}
+          </Native.ScrollView>
+          <Paper.Button mode='contained' disabled={!allIngredients.includes(manualText)} onPress={addManual}>Add Ingredient</Paper.Button>
         </Paper.Modal>
       </Paper.Portal>
     </Native.View>
@@ -103,5 +145,21 @@ const styles = Native.StyleSheet.create({
   modal: {
     backgroundColor: 'white', 
     padding: 20
+  },
+  chipList: {
+    margin: 10,
+    padding: 5,
+    height: 100,
+    flexGrow: 1,
+    justifyContent: 'center',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  chip: {
+    margin: 2,
+  },
+  cameraPreview: {
+    height: 250,
+    marginBottom: 10,
   }
 });
