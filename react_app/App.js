@@ -8,7 +8,7 @@ import Recipes from './components/Recipes';
 export default function App() {
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    { key: 'pantry', title: 'Pantry', focusedIcon: 'food-apple' },
+    { key: 'pantry', title: 'Pantry', focusedIcon: require('./assets/snack-icon.png') },
     { key: 'recipes', title: 'Recipes', focusedIcon: 'book' },
   ]);
 
@@ -19,7 +19,7 @@ export default function App() {
 
   return (
     <Paper.Provider>
-    <Native.View style={styles.container}>
+    <Native.SafeAreaView style={styles.container}>
       <Paper.Title style={styles.header}> WorldlyBites </Paper.Title>
       <Paper.BottomNavigation
         style={styles.bottomBar}
@@ -27,7 +27,7 @@ export default function App() {
         onIndexChange={setIndex}
         renderScene={renderScene}
       />
-    </Native.View>
+    </Native.SafeAreaView>
     </Paper.Provider>
   );
 }
@@ -40,8 +40,8 @@ const styles = Native.StyleSheet.create({
   },
   header: {
     flex: 0,
-    textalign: 'center',
     padding: 10,
+    paddingTop: 20,
     textAlign: 'center',
   },
   bottomBar: {

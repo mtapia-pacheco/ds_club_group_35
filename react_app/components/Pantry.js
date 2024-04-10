@@ -5,7 +5,7 @@ import * as Paper from 'react-native-paper';
 const allIngredients = ["Fish", "Flour", "Cabbage", "Squid", "Salmon", "Pie"];
 
 export default function Pantry() {
-  [ingredientData, setIngredientData] = React.useState(["Flour"]);
+  [ingredientData, setIngredientData] = React.useState([]);
 
   const Ingredient = ({name}) => (
     <Native.View style={styles.ingredient}>
@@ -18,6 +18,8 @@ export default function Pantry() {
       }}>Del</Paper.Button>
     </Native.View>
   );
+
+  
 
   const [manualModalVisible, setManualModalVisible] = React.useState(false);
   const showManualModal = () => {setManualModalVisible(true); setManualText("")};
@@ -53,13 +55,14 @@ export default function Pantry() {
           <Paper.TextInput
             label="Enter Ingredient Name..."
             value={manualText}
-            onChangeText = {manualText => {setManualText(manualText); validateIngredientInput()}}
+            onChangeText = {manualText => {setManualText(manualText)}}
           />
           <Native.FlatList
             data={suggestedIngredients()}
             renderItem= { ({item}) => <Paper.Chip style={{marginTop: 5, marginRight: 5}} onPress={() => setManualText(item)}>{item}</Paper.Chip> }
             style={{margin: 10, padding:5}}
             horizontal
+            showsHorizontalScrollIndicator={false}
           />
           <Paper.Button mode='contained' disabled={!allIngredients.includes(manualText)} onPress={addManual}>Add</Paper.Button>
         </Paper.Modal>
@@ -90,7 +93,6 @@ const styles = Native.StyleSheet.create({
     flex: 1,
   },
   ingredient: {
-    height: 50,
     flexDirection: 'row',
     marginBottom: 5,
     alignItems: 'center',
