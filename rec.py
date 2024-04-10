@@ -22,7 +22,7 @@ def get_recommendations(N, scores):
 
     return recommendations
 
-def RecSys(ingredients, N=5):
+def rec_api(ingredients, N=5):
     """
     The reccomendation system takes in a list of ingredients and returns a list of top 5 
     recipes based of of cosine similarity. 
@@ -58,6 +58,6 @@ def RecSys(ingredients, N=5):
 if __name__ == "__main__":
     # test ingredients
     test_ingredients = "ground beef, pasta, spaghetti, tomato pasta sauce, bacon, onion, zucchini, cheese"
-    recs = RecSys(test_ingredients)
+    recs = rec_api(test_ingredients)
     print(recs)
 
