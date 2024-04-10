@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 from flask import Flask, jsonify, request
 from rec import rec_api
 
@@ -36,5 +37,7 @@ def recommend_recipe():
 
 if __name__ == "__main__":
    app.run(host="0.0.0.0", debug=True)
+=======
+>>>>>>> parent of dd0d47c (api)
 =======
 >>>>>>> parent of dd0d47c (api)
