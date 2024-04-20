@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 from recipe import ingredient_parser
 import pickle
+import base64
 
 def get_recommendations(N, scores):
     # load in recipe dataset
@@ -11,12 +12,17 @@ def get_recommendations(N, scores):
     top = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)[:N]
 
     # create dataframe to load in recommendations
-    recommendations = pd.DataFrame(columns = ['Title', 'Ingredients', 'Images'])
+    recommendations = pd.DataFrame(columns = ['Title', 'Ingredients', 'Image_Name'])
 
     count = 0
     for i in top:
         recommendations.at[count, 'Title'] = df_recipes['Title'][i]
         recommendations.at[count, 'Ingredients'] = df_recipes['Cleaned_Ingredients'][i]
+        # set up image for api
+        name = df_recipes['Image_Name'][i]
+        with open(f'recipe_data/Food Images/Food Images/{name}.jpg', "rb") as image_file:
+            image_data = image_file.read()
+        recommendations.at[count, 'Image_Name'] = base64.b64encode(image_data).decode()
         #recommendations.at[count, 'Score'] = "{:.3f}".format(float(scores[i]))
         count += 1
 
@@ -59,5 +65,11 @@ if __name__ == "__main__":
     # test ingredients
     test_ingredients = "ground beef, pasta, spaghetti, tomato pasta sauce, bacon, onion, zucchini, cheese"
     recs = rec_api(test_ingredients)
-    print(recs)
+    print(recs.iloc[4]['Image_Name'])
+    from PIL import Image
+    from io import BytesIO
+    image_bytes = base64.b64decode(recs.iloc[4]['Image_Name'])
+    image_file = BytesIO(image_bytes)
+    image = Image.open(image_file)
+    image.show()
 

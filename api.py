@@ -29,6 +29,7 @@ def recommend_recipe():
         response[count] = {
                             'recipe': str(row['Title']),
                             'ingredients': str(row['Ingredients']),
+                            'image': row["Image_Name"],
                           }
         count += 1
     return jsonify(response)
