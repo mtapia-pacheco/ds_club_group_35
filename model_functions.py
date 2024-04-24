@@ -33,6 +33,12 @@ def prediction(model, image, threshold = 1.8153345e-03):
     # function for getting list of predicted ingredients in a processed image
     # model: keras model loaded from directory
     # image: numpy array containing pixel info (result of process_img)
+    class_names = ['apple', 'avocado', 'banana', 'beans', 'beef', 
+                   'bellpepper', 'bread', 'butter', 'carrot', 'cheese', 
+                   'chicken', 'eggs', 'fish', 'flour', 'garlic', 
+                   'honey', 'lentils', 'lettuce', 'lime', 'milk', 
+                   'oats', 'onion', 'pasta', 'pork', 'potato', 
+                   'rice', 'spinach', 'sugar', 'tofu', 'tomato']
     pred = model.predict(image)
     pred = np.array(pred)
 
