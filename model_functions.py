@@ -52,5 +52,5 @@ def prediction(model, image, threshold = 1.8153345e-03):
 # old_model = tf.keras.models.load_model('resnet_model.keras')
 
 # second version of model with custom loss function
-# custom_objects = {"sum_binary_crossentropy": sum_binary_crossentropy}
-# new_model = tf.keras.models.load_model('resnet_model_2.keras', custom_objects=custom_objects)
+custom_objects = {"sum_binary_crossentropy": sum_binary_crossentropy}
+new_model = tf.keras.models.load_model('resnet_model.keras', custom_objects=custom_objects)
