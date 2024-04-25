@@ -1,14 +1,15 @@
 # import necessary packages
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
-import os
-import PIL
+#import pandas as pd
+#import os
+#import PIL
 import cv2
-import pathlib
+#import pathlib
 import tensorflow as tf
 from tensorflow import keras
 from keras import backend as K
+import json
 
 
 # FUNCTION DEFINITIONS
@@ -29,7 +30,7 @@ def process_img(image_path):
 
     return image
 
-def prediction(model, image, threshold = 1.8153345e-03):
+def resnet_prediction(model, image, threshold = 1.8153345e-03):
     # function for getting list of predicted ingredients in a processed image
     # model: keras model loaded from directory
     # image: numpy array containing pixel info (result of process_img)
@@ -39,7 +40,7 @@ def prediction(model, image, threshold = 1.8153345e-03):
                    'honey', 'lentils', 'lettuce', 'lime', 'milk', 
                    'oats', 'onion', 'pasta', 'pork', 'potato', 
                    'rice', 'spinach', 'sugar', 'tofu', 'tomato']
-    pred = model.predict(image)
+    pred = model.predict(process_img(image))
     pred = np.array(pred)
 
     output_classes = list(map(lambda j: class_names[j], [j for j in range(len(class_names)) if pred[0][j] > threshold]))
@@ -52,5 +53,12 @@ def prediction(model, image, threshold = 1.8153345e-03):
 # old_model = tf.keras.models.load_model('resnet_model.keras')
 
 # second version of model with custom loss function
-# custom_objects = {"sum_binary_crossentropy": sum_binary_crossentropy}
-# new_model = tf.keras.models.load_model('resnet_model_2.keras', custom_objects=custom_objects)
+custom_objects = {"sum_binary_crossentropy": sum_binary_crossentropy}
+f = open('model.json')
+data = json.load(f)
+test_model = tf.keras.models.model_from_json(data, custom_objects=custom_objects)
+test_model.load_weights('my_model_weights.h5')
+
+print(resnet_prediction(test_model, 'test_val.jpg'))
+
+
