@@ -1,0 +1,6 @@
+module Pods_worldlybites {
+  umbrella header "Pods-worldlybites-umbrella.h"
+
+  export *
+  module * { export * }
+}
