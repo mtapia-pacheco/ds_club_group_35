@@ -108,12 +108,17 @@ export default function Pantry() {
               <Paper.Button visible={!pictureTaken} mode='contained' disabled={!isCameraReady} onPress={takePicture} >Take Picture</Paper.Button> 
             </Native.View> 
             :
-            <Native.View>
+            <Native.View style={{flex: 1}}>
               <Native.Image style={styles.cameraPreview} source={{uri: cameraURI}} />
-              <Native.Text>The following ingredients were found:</Native.Text>
+              <Native.Text>Detected Ingredients (press to remove):</Native.Text>
               { !pictureProcessing ?
-                <Native.ScrollView contentContainerStyle={styles.chipList}>
-                  {cameraIngredients.map( (item) => <Paper.Chip style={styles.chip} key={item}>{item}</Paper.Chip>)}
+                <Native.ScrollView style={{margin: 10}} contentContainerStyle={styles.chipList}>
+                  {cameraIngredients.map( (item) => <Paper.Chip style={styles.chip} key={item} onPress={ () => {
+                    const index = cameraIngredients.indexOf(item);
+                    var newData;
+                    if(index >= 0) {newData = cameraIngredients.slice(); newData.splice(index, 1);}
+                    setCameraIngredients(newData);
+                  }}> {item} </Paper.Chip>)}
                 </Native.ScrollView>
                 :
                 <Paper.ActivityIndicator animating={true} />
@@ -129,7 +134,7 @@ export default function Pantry() {
             value={manualText}
             onChangeText = {manualText => {setManualText(manualText)}}
           />
-          <Native.ScrollView contentContainerStyle={styles.chipList}>
+          <Native.ScrollView style={{margin: 10}} contentContainerStyle={styles.chipList}>
             {ingredientAutofill().map( (item) => <Paper.Chip style={styles.chip} key={item} onPress={() => setManualText(item)}>{item}</Paper.Chip>)}
           </Native.ScrollView>
           <Paper.Button mode='contained' disabled={!allIngredients.includes(manualText)} onPress={addManual}>Add Ingredient</Paper.Button>
@@ -170,12 +175,11 @@ const styles = Native.StyleSheet.create({
   },
   modal: {
     backgroundColor: 'white', 
-    padding: 20
+    padding: 20,
+    height: 500
   },
   chipList: {
     margin: 10,
-    padding: 5,
-    height: 100,
     flexGrow: 1,
     justifyContent: 'center',
     flexDirection: 'row',
