@@ -22,8 +22,11 @@ const allRecipes = [
 
 export default function Recipes() {
 
-  function suggestedRecipes(ingredients) {
-    return allRecipes;
+  [suggestedRecipes, setSuggestedRecipes] = React.useState([0]);
+
+  function suggestRecipes(ingredients) {
+    setSuggestedRecipes(allRecipes);
+    console.log(suggestedRecipes.length);
   }
 
   const RecipeCard = ({recipe}) => (
@@ -37,11 +40,20 @@ export default function Recipes() {
 
   return (
     <Native.View style={styles.container}>
-      <Native.FlatList
-        data={allRecipes}
-        renderItem= { ({item}) => <RecipeCard recipe={item} /> }
-        style={styles.recipeList}
-      />
+      <Paper.Button style={styles.button} mode='contained' onPress={suggestRecipes}> Suggest New Recipes! </Paper.Button>
+
+      { suggestedRecipes.length == 0 ?
+        <Paper.Text style={styles.text}> No Recipes Loaded </Paper.Text>
+        :
+        <Native.View>
+          <Paper.Text style={styles.text}> Click on a card for more info: </Paper.Text>
+          <Native.FlatList
+            data={suggestedRecipes}
+            renderItem= { ({item}) => <RecipeCard recipe={item} /> }
+            style={styles.recipeList}
+          />
+        </Native.View>
+      }
     </Native.View>
   );
 }
@@ -59,5 +71,8 @@ const styles = Native.StyleSheet.create({
   },
   recipeCard: {
     marginBottom: 10,
+  },
+  button: {
+    marginBottom: 5
   }
 });
