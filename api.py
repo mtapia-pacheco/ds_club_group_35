@@ -27,8 +27,11 @@ def recommend_recipe():
     count = 0    
     for index, row in recipe.iterrows():
         response[count] = {
-                            'recipe': str(row['Title']),
+                            'title': str(row['Title']),
                             'ingredients': str(row['Ingredients']),
+                            'instructions': str(row['Instructions']),
+                            'image': row["Image_Name"],
+                            'cuisine': str(row['Cuisine']),
                           }
         count += 1
     return jsonify(response)
