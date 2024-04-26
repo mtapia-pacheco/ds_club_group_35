@@ -10,9 +10,8 @@ def hello():
     return HELLO_HTML
 HELLO_HTML = """
      <html><body>
-         <h1>Welcome to my api: Whatscooking!</h1>
-         <p>Please add some ingredients to the url to receive recipe recommendations.
-            You can do this by appending "/recipe?ingredients= Pasta Tomato ..." to the current url.
+         <h1>Worldly Bites Recipe Recommendation API</h1>
+         <p>Please add some ingredients to the url to receive recipe recommendations by appending "/recipe?ingredients= Pasta Tomato ..." to the current url.
          <br>Click <a href="/recipe?ingredients= pasta tomato onion">here</a> for an example when using the ingredients: pasta, tomato and onion.
      </body></html>
      """
