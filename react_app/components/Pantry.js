@@ -34,6 +34,7 @@ export default function Pantry() {
       requestCameraPermission();
     }
   };
+
   const hideCameraModal = () => setCameraModalVisible(false);
 
   const [cameraURI, setCameraURI] = React.useState("");
@@ -41,6 +42,7 @@ export default function Pantry() {
   const takePicture = async () => {
     const data = await cameraRef.current.takePictureAsync({});
     setCameraURI(data.uri);
+    console.log(data.uri);
     setPictureTaken(true);
     setCameraIngredients(getCameraIngredients());
   }
@@ -55,6 +57,39 @@ export default function Pantry() {
       ingredientData.sort();
     }
     hideManualModal();
+  };
+  
+  [recipe, setRecipe] = React.useState([]);
+
+  /*eact.useEffect(() => {
+    const fetchRecipe = async () => {
+      const response = await fetch('/recipe?ingredients= pasta tomato onion');
+      const data = await response.json();
+      setRecipe(data);
+    };
+
+    fetchRecipe();
+  }, []);*/
+
+  const fetchRecipe = async () => {
+    const response = await fetch('/recipe?ingredients= pasta tomato onion', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    /*.then(response => response.json())
+    .then(response => setRecipe(response))
+    .catch(function(error) {
+      console.log('There has been a problem with your fetch operation: ' + error.message);
+      });
+      */
+      try {
+        JSON.parse(response);
+      }
+      catch (error) {
+        console.log('Error parsing JSON:', error, response);
+      }
   };
 
   function ingredientAutofill() {
@@ -77,6 +112,9 @@ export default function Pantry() {
         renderItem= { ({item}) => <Ingredient name={item} /> }
         style={styles.ingredientList}
       />
+      <Native.View>
+        <Paper.Button style={styles.button} mode='contained' onPress={fetchRecipe}>a</Paper.Button>
+      </Native.View>
 
       <Paper.Portal>
         <Paper.Modal visible={cameraModalVisible} onDismiss={hideCameraModal} contentContainerStyle={styles.modal}>
