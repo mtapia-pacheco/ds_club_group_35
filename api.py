@@ -19,7 +19,7 @@ HELLO_HTML = """
      """
 @app.route('/recipe', methods=["GET"])
 def recommend_recipe():
-    # This is our endpoint. It can be accessed by http://127.0.0.1:5000/recipe
+    # This is our endpoint.
     ingredients = request.args.get('ingredients')
     recipe = rec_api(ingredients)
     
@@ -38,5 +38,5 @@ def recommend_recipe():
     return jsonify(response)
 
 if __name__ == "__main__":
-   #app.run(host="0.0.0.0", debug=True)
-   app.run(debug=True)
+   # lets api run on any ip address and port 8081
+   app.run(host='0.0.0.0', port=8081)

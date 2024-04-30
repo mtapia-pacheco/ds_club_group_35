@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as Native from 'react-native';
 import * as Paper from 'react-native-paper';
 import { Camera, CameraType } from 'expo-camera';
-import { NetworkInfo } from "react-native-network-info";
+import * as Network from 'expo-network';
 
 const allIngredients = ["Fish", "Flour", "Cabbage", "Squid", "Salmon", "Pie", "Fish", "Flour", "Cabbage", "Squid", "Salmon", "Pie", "Fish", "Flour", "Cabbage", "Squid", "Salmon", "Pie"];
 
@@ -60,59 +60,32 @@ export default function Pantry() {
     hideManualModal();
   };
 
-  const [recipe, setRecipe] = React.useState([]);
+  const [ip, setIp] = React.useState([]);
+  const [recipes, setRecipes] = React.useState([]);
 
-  /*eact.useEffect(() => {
-    const fetchRecipe = async () => {
-      const response = await fetch('/recipe?ingredients= pasta tomato onion');
-      const data = await response.json();
-      setRecipe(data);
-    };
+  const getUserIPAddress = async () => {
+    const ipAddress = await Network.getIpAddressAsync();
+    setIp(ipAddress);
+    return ipAddress;
+  };
 
-    fetchRecipe();
-  }, []);*/
-  NetworkInfo.getIPAddress().then(ipAddress => {
-    console.log(ipAddress);
-  });
-  const fetchRecipe = async () => {
-    const ipAddress = await fetch('https://api.ipify.org?format=json')
-      .then(response => response.json())
-      .then(data => {
-        console.log('apiv4_getIpAddressgetIpAddress', data);
-      })
-      .then(await fetch(`http://${data}:8081/recipe?ingredients= pasta tomato onion`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }))
-      try {
-        JSON.parse(response);
-        console.log(response);
-      }
-      catch (error) {
-        console.log('Error parsing JSON:', error, response);
-      }
-
+  const fetchRecipe = async (ipAddress) => {
     const response = await fetch(`http://${ipAddress}:8081/recipe?ingredients= pasta tomato onion`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
       }
     })
-    /*.then(response => response.json())
-    .then(response => setRecipe(response))
-    .catch(function(error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
-      });
-      */
-      try {
-        JSON.parse(response);
-        console.log(response);
-      }
-      catch (error) {
-        console.log('Error parsing JSON:', error, response);
-      }
+    console.log(response);
+    const data = await response.json();
+    setRecipes(data);
+    return recipes;
+  };
+
+  const clickRecipes = async () => {
+    const ipAddress = await getUserIPAddress()
+    console.log(ipAddress);
+    const recipes = await fetchRecipe(ipAddress);
   };
 
   function ingredientAutofill() {
@@ -136,7 +109,7 @@ export default function Pantry() {
         style={styles.ingredientList}
       />
       <Native.View>
-        <Paper.Button style={styles.button} mode='contained' onPress={fetchRecipe}>a</Paper.Button>
+        <Paper.Button style={styles.button} mode='contained' onPress={clickRecipes}>{recipes}</Paper.Button>
       </Native.View>
 
       <Paper.Portal>
