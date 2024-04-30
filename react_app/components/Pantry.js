@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as Native from 'react-native';
 import * as Paper from 'react-native-paper';
 import { Camera, CameraType } from 'expo-camera';
+import { NetworkInfo } from "react-native-network-info";
 
 const allIngredients = ["Fish", "Flour", "Cabbage", "Squid", "Salmon", "Pie", "Fish", "Flour", "Cabbage", "Squid", "Salmon", "Pie", "Fish", "Flour", "Cabbage", "Squid", "Salmon", "Pie"];
 
@@ -58,8 +59,8 @@ export default function Pantry() {
     }
     hideManualModal();
   };
-  
-  [recipe, setRecipe] = React.useState([]);
+
+  const [recipe, setRecipe] = React.useState([]);
 
   /*eact.useEffect(() => {
     const fetchRecipe = async () => {
@@ -70,9 +71,30 @@ export default function Pantry() {
 
     fetchRecipe();
   }, []);*/
-
+  NetworkInfo.getIPAddress().then(ipAddress => {
+    console.log(ipAddress);
+  });
   const fetchRecipe = async () => {
-    const response = await fetch('/recipe?ingredients= pasta tomato onion', {
+    const ipAddress = await fetch('https://api.ipify.org?format=json')
+      .then(response => response.json())
+      .then(data => {
+        console.log('apiv4_getIpAddressgetIpAddress', data);
+      })
+      .then(await fetch(`http://${data}:8081/recipe?ingredients= pasta tomato onion`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }))
+      try {
+        JSON.parse(response);
+        console.log(response);
+      }
+      catch (error) {
+        console.log('Error parsing JSON:', error, response);
+      }
+
+    const response = await fetch(`http://${ipAddress}:8081/recipe?ingredients= pasta tomato onion`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -86,6 +108,7 @@ export default function Pantry() {
       */
       try {
         JSON.parse(response);
+        console.log(response);
       }
       catch (error) {
         console.log('Error parsing JSON:', error, response);
